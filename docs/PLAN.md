@@ -100,7 +100,7 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 - [ ] Josefin Sans font, app icon + splash from the website logo (`../vercel_the-wild-oasis-website/public/logo.png`)
 - [ ] Optional: TanStack Query for fetching/caching (good talking point)
 
-### Phase 2: Security / RLS 🚧 in progress ⚠️ do before writing any auth/booking code
+### Phase 2: Security / RLS ✅ done (admin-app check pending)
 SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
 - [x] **2a: `01-rls-admins-and-guests.sql`** applied 2026-10-22, verified with
       `01-rls-check.sql` (impersonates each caller, rolls back):
@@ -125,16 +125,23 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
   - Revokes anon writes and TRUNCATE (bypasses RLS) as defense in depth.
 - [ ] After 2a (owner to check): `dave@mail.com` logs out/in to the admin app and checks cabins, bookings,
       settings, check-in still work. Mobile app should show "8 cabins visible".
-- [ ] **2b: `02-booking-rpcs.sql`**:
-  - `get_booked_dates(cabin_id)`: `security definer`, returns only `startDate, endDate` (anon OK).
-  - `update_booking(id, num_guests, observations)`: own, future, unconfirmed only.
-  - **Create booking via RPC** `create_booking(cabin_id, start_date, end_date, num_guests, observations)`:
-    compute `numNights`, `cabinPrice`, `totalPrice` from `cabins` **server-side**, check overlaps and
-    `settings` limits, force `status='unconfirmed'`, `isPaid=false`. (The website trusts
-    client-sent prices; the app shouldn't. Good point to show.)
-- Grants: policies need matching grants (`grant select on public.cabins to anon, authenticated`),
-  otherwise error `42501`.
-- Test: anon can read cabins but not bookings/guests; user A can't see user B's bookings.
+- [x] **2b: `02-booking-rpcs.sql`** applied 2026-10-22, verified with `02-booking-rpcs-check.sql`
+      (10 cases, rolls back; all as expected). App calls: `supabase.rpc('<name>', { p_… })`.
+  - `get_booked_dates(p_cabin_id)` → `[{ start_date, end_date }]`, anon + authenticated, no guest
+    data. Same rule as the website (upcoming + checked-in).
+  - `create_booking(p_cabin_id, p_start_date, p_end_date, p_num_guests, p_observations)` → new
+    booking id. Authenticated only. Finds the guest by JWT email ("No guest profile for this
+    account" if none), checks start > today, nights within `settings` min/max, guests ≤
+    min(cabin capacity, `maxGuestsPerBooking`), observations ≤ 1000 chars, no overlap
+    (check-out day is free; per-cabin advisory lock against double booking). Prices computed
+    **server-side**, `status='unconfirmed'`, `isPaid=false`. (The website trusts client-sent
+    prices; the app doesn't. Good point to show.)
+  - `update_booking(p_booking_id, p_num_guests, p_observations)`: own, upcoming, unconfirmed
+    only; same guest/observation limits. Someone else's booking → "Booking not found".
+  - Cancel = plain `delete` on `bookings` (policy from 2a: own + future).
+  - Errors are `raise exception` messages, meant to be shown to the user as-is.
+  - Via the REST API with the anon key: `get_booked_dates` returns ranges; `create_booking`
+    → `42501 permission denied for function`.
 - Before Phase 3: turn "Allow new users to sign up" back on (needed for new Google users).
 
 ### Phase 3: Google sign-in ~1–2 days
