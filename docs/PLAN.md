@@ -102,8 +102,18 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 
 ### Phase 2: Security / RLS 🚧 in progress ⚠️ do before writing any auth/booking code
 SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
-- [ ] **2a: `01-rls-admins-and-guests.sql`** (written, awaiting review/run), then verify with
-      `01-rls-check.sql` (impersonates anon / non-admin / guest / admin, rolls back). Covers:
+- [x] **2a: `01-rls-admins-and-guests.sql`** applied 2026-10-22, verified with
+      `01-rls-check.sql` (impersonates each caller, rolls back):
+
+      | caller | cabins | settings | bookings | guests | cabins updated |
+      |---|---|---|---|---|---|
+      | anon | 8 | 1 | 0 | 0 | (no privilege) |
+      | signed in, not admin | 8 | 1 | 0 | 0 | 0 |
+      | guest with bookings | 8 | 1 | 1 (own) | 1 (own) | 0 |
+      | admin | 8 | 1 | 41 | 32 | 8 |
+
+      Also via the REST API with the anon key: 8 cabins, 1 settings row, 0 bookings, 0 guests;
+      `PATCH cabins` → `42501 permission denied`. Covers:
   - Admins = `app_metadata.role = 'admin'` (only settable server-side; `user_metadata` is
     user-editable). Only `dave@mail.com` is admin; `ozzy@mail.com` becomes a plain user.
     `public.is_admin()` reads the claim. Admins: all on the 4 tables and both buckets.
@@ -113,7 +123,7 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
   - `bookings`: guests select own; delete own only if `startDate > now()`. No direct
     insert/update for guests (would let them set prices/status): RPCs in 2b.
   - Revokes anon writes and TRUNCATE (bypasses RLS) as defense in depth.
-- [ ] After 2a: `dave@mail.com` logs out/in to the admin app and checks cabins, bookings,
+- [ ] After 2a (owner to check): `dave@mail.com` logs out/in to the admin app and checks cabins, bookings,
       settings, check-in still work. Mobile app should show "8 cabins visible".
 - [ ] **2b: `02-booking-rpcs.sql`**:
   - `get_booked_dates(cabin_id)`: `security definer`, returns only `startDate, endDate` (anon OK).
