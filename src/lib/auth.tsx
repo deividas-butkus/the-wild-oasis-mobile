@@ -2,6 +2,7 @@ import type { Session } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { createContext, use, useEffect, useState, type ReactNode } from "react";
+import { Platform } from "react-native";
 
 import { supabase } from "@/lib/supabase";
 
@@ -32,9 +33,20 @@ export function useAuth() {
   return use(AuthContext);
 }
 
+// Supabase Auth rejects redirect URLs whose host is an IP address (other than loopback),
+// whatever the allow-list says, so Expo Go's LAN URL (exp://192.168.x.x:8081/--/...) never
+// passes. On iOS the auth session catches the app scheme itself, even in Expo Go, so use it
+// there. Elsewhere use the platform's URL: web http://localhost:8081/..., Android builds the
+// app scheme; Android in Expo Go needs `npx expo start --tunnel` (a hostname, not an IP).
+function authRedirectUrl() {
+  return Platform.OS === "ios"
+    ? "thewildoasismobile://auth/callback"
+    : Linking.createURL("auth/callback");
+}
+
 // Resolves false if the user closed the browser without signing in
 export async function signInWithGoogle(): Promise<boolean> {
-  const redirectTo = Linking.createURL("auth/callback");
+  const redirectTo = authRedirectUrl();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
