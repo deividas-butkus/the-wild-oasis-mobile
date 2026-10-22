@@ -85,6 +85,12 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
   at, confirm it, and then read every guest's data and edit or delete all bookings, cabins and
   settings. Turning sign-ups off isn't the fix, because Google sign-in (Phase 3) needs them on to
   create new users. The fix is the admin/guest split in Phase 2, which is now the top priority.
+- **Incident (found 2026-10-22):** one of the 3 auth users wasn't created by the owner. The audit
+  log shows a stranger signed up with a disposable email on 2025-07-07, confirmed it and stayed
+  signed in ~12 min, no IP recorded. With the policies above it had full read/write. What it read
+  or changed can't be known (no row history; free-plan DB logs last ~1 day). Response: account
+  deleted by the owner (2026-10-22); sign-ups turned off until Phase 2 is live and Phase 3 needs
+  them (re-enable then); Phase 2 closes the hole. The other 2 users are the owner's test accounts.
 
 ### Phase 1: Browse cabins (no auth) ~1–2 days
 - [ ] Tabs layout (`(tabs)`: Cabins, Account) + stack for details
@@ -94,27 +100,32 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 - [ ] Josefin Sans font, app icon + splash from the website logo (`../vercel_the-wild-oasis-website/public/logo.png`)
 - [ ] Optional: TanStack Query for fetching/caching (good talking point)
 
-### Phase 2: Security / RLS ~½ day ⚠️ do before writing any auth/booking code
-Draft policies (verify against Phase 0 findings; run in the SQL editor):
-- **Admins vs guests.** Both are `authenticated`, so mark admins with
-  `app_metadata.role = 'admin'` (only settable server-side, unlike `user_metadata`, which users
-  can edit themselves): `update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}' where email in (…)`.
-  Add `public.is_admin()` = `(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'` and replace
-  any "all for `authenticated`" policies (tables + storage buckets) with `is_admin()` ones.
-  Admins must log out/in once to get the new claim. Then check the admin app still works.
-- `cabins`, `settings`: RLS on; `select` for `anon, authenticated` using `true`.
-- `bookings`: **don't expose to anon** (contains guest data). For availability add a
-  `security definer` RPC `get_booked_dates(cabin_id)` returning only `startDate, endDate`.
-- `guests`: `authenticated` may select/update/insert only `where email = auth.jwt()->>'email'`.
-- `bookings` for the guest: select/update/delete only rows whose `guestId` belongs to the
-  caller's email.
-- **Create booking via RPC** `create_booking(cabin_id, start_date, end_date, num_guests, observations)`:
-  compute `numNights`, `cabinPrice`, `totalPrice` from `cabins` **server-side**, check overlaps and
-  `settings` limits, force `status='unconfirmed'`, `isPaid=false`. (The website trusts
-  client-sent prices; the app shouldn't. Good point to show.)
+### Phase 2: Security / RLS 🚧 in progress ⚠️ do before writing any auth/booking code
+SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
+- [ ] **2a: `01-rls-admins-and-guests.sql`** (written, awaiting review/run), then verify with
+      `01-rls-check.sql` (impersonates anon / non-admin / guest / admin, rolls back). Covers:
+  - Admins = `app_metadata.role = 'admin'` (only settable server-side; `user_metadata` is
+    user-editable). Only `dave@mail.com` is admin; `ozzy@mail.com` becomes a plain user.
+    `public.is_admin()` reads the claim. Admins: all on the 4 tables and both buckets.
+  - Drops all the course's "Enable … for all users" policies (tables + storage).
+  - `cabins`, `settings`: select for `anon, authenticated`.
+  - `guests`: select/insert/update own row only (`lower(email) = lower(auth.jwt()->>'email')`).
+  - `bookings`: guests select own; delete own only if `startDate > now()`. No direct
+    insert/update for guests (would let them set prices/status): RPCs in 2b.
+  - Revokes anon writes and TRUNCATE (bypasses RLS) as defense in depth.
+- [ ] After 2a: `dave@mail.com` logs out/in to the admin app and checks cabins, bookings,
+      settings, check-in still work. Mobile app should show "8 cabins visible".
+- [ ] **2b: `02-booking-rpcs.sql`**:
+  - `get_booked_dates(cabin_id)`: `security definer`, returns only `startDate, endDate` (anon OK).
+  - `update_booking(id, num_guests, observations)`: own, future, unconfirmed only.
+  - **Create booking via RPC** `create_booking(cabin_id, start_date, end_date, num_guests, observations)`:
+    compute `numNights`, `cabinPrice`, `totalPrice` from `cabins` **server-side**, check overlaps and
+    `settings` limits, force `status='unconfirmed'`, `isPaid=false`. (The website trusts
+    client-sent prices; the app shouldn't. Good point to show.)
 - Grants: policies need matching grants (`grant select on public.cabins to anon, authenticated`),
   otherwise error `42501`.
 - Test: anon can read cabins but not bookings/guests; user A can't see user B's bookings.
+- Before Phase 3: turn "Allow new users to sign up" back on (needed for new Google users).
 
 ### Phase 3: Google sign-in ~1–2 days
 - Recommended: **browser OAuth flow**, `supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo, skipBrowserRedirect: true } })`
