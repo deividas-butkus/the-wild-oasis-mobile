@@ -100,7 +100,7 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 - [ ] Josefin Sans font, app icon + splash from the website logo (`../vercel_the-wild-oasis-website/public/logo.png`)
 - [ ] Optional: TanStack Query for fetching/caching (good talking point)
 
-### Phase 2: Security / RLS ✅ done (admin-app check pending)
+### Phase 2: Security / RLS ✅ done
 SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
 - [x] **2a: `01-rls-admins-and-guests.sql`** applied 2026-10-22, verified with
       `01-rls-check.sql` (impersonates each caller, rolls back):
@@ -123,8 +123,9 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
   - `bookings`: guests select own; delete own only if `startDate > now()`. No direct
     insert/update for guests (would let them set prices/status): RPCs in 2b.
   - Revokes anon writes and TRUNCATE (bypasses RLS) as defense in depth.
-- [ ] After 2a (owner to check): `dave@mail.com` logs out/in to the admin app and checks cabins, bookings,
-      settings, check-in still work. Mobile app should show "8 cabins visible".
+- [x] After 2a: owner logged in to the admin app as `dave@mail.com` (2026-10-22); all pages load
+      with data. Writes not clicked through yet, but `01-rls-check.sql` shows the admin can
+      update all cabins. Untested: storage uploads (cabin image, avatar) under the new bucket policy.
 - [x] **2b: `02-booking-rpcs.sql`** applied 2026-10-22, verified with `02-booking-rpcs-check.sql`
       (10 cases, rolls back; all as expected). App calls: `supabase.rpc('<name>', { p_… })`.
   - `get_booked_dates(p_cabin_id)` → `[{ start_date, end_date }]`, anon + authenticated, no guest
