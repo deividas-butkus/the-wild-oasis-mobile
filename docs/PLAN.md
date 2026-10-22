@@ -92,13 +92,23 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
   deleted by the owner (2026-10-22); sign-ups turned off until Phase 2 is live and Phase 3 needs
   them (re-enable then); Phase 2 closes the hole. The other 2 users are the owner's test accounts.
 
-### Phase 1: Browse cabins (no auth) ~1–2 days
-- [ ] Tabs layout (`(tabs)`: Cabins, Account) + stack for details
-- [ ] Cabin list: `FlatList`, `expo-image`, price/discount, capacity, pull-to-refresh, loading/error states
-- [ ] Capacity filter (all / 1–3 / 4–7 / 8–12, same as website)
-- [ ] Cabin detail screen `cabins/[id].tsx`: image, description, capacity, price
-- [ ] Josefin Sans font, app icon + splash from the website logo (`../vercel_the-wild-oasis-website/public/logo.png`)
-- [ ] Optional: TanStack Query for fetching/caching (good talking point)
+### Phase 1: Browse cabins (no auth) ✅ done on web (phone check pending)
+- [x] Tabs layout (`(tabs)`: Cabins, Account placeholder) + root stack for details. Root stack
+      has `unstable_settings.anchor = "(tabs)"`, so a deep link to a cabin still gets "back"
+- [x] Cabin list: `FlatList`, `expo-image`, price/discount, capacity, pull-to-refresh, loading/error states
+- [x] Capacity filter (all / 1–3 / 4–7 / 8–12, same as website)
+- [x] Cabin detail screen `cabins/[id].tsx`: image, description, capacity, price; "Cabin not
+      found" for unknown/non-numeric ids (no retry)
+- [x] Josefin Sans via `@expo-google-fonts/josefin-sans` + `useFonts` (works in Expo Go; each
+      weight is its own family, see `src/constants/fonts.ts`). Icons: `expo-symbols`
+      (`@expo/vector-icons` is deprecated), wrapped in `src/components/icon.tsx`
+- [x] Splash image + web favicon from the website logo (splash only shows in real builds, not Expo Go)
+- [ ] App icon: the only logo is 163×163 (website), too small for a 1024×1024 icon. Needs a
+      higher-res source or a redraw; until then the template icon stays
+- [x] TanStack Query (`src/lib/cabins.ts` hooks): caching, refetch, retries except "not found"
+- [x] Checked on web (2026-10-22): list, filter, discount price, detail, back, account tab,
+      not-found states. **Still to check on a phone in Expo Go**: icons (native SF/Material
+      symbols), fonts, pull-to-refresh, image loading
 
 ### Phase 2: Security / RLS ✅ done
 SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
