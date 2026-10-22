@@ -57,11 +57,21 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 - [x] Legacy `anon` key in `.env.local` (2026-10-22). App runs on web and shows "Connected: 0 cabins visible"
 - [x] RLS state as seen by the anon key: **all 4 tables return 0 rows, no error**. So RLS is
       enabled but no policy grants `anon` read access. Safe default; Phase 2 opens what's needed.
-- [ ] Check the admin app (`../vercel_the-wild-oasis`): which key, which tables it writes. It
-      likely uses the anon key + `authenticated` policies, so **read the existing policies**
-      (Supabase → Database → Policies) before adding/changing any
-- [ ] Inspect existing policies/grants in the SQL editor:
-      `select tablename, policyname, roles, cmd, qual from pg_policies where schemaname='public';`
+- [x] Check the admin app (`../vercel_the-wild-oasis`) (2026-10-22). Findings:
+  - Vite SPA, **legacy anon key hardcoded** in `src/services/supabase.js`; email/password login
+    (`signInWithPassword`), so every admin operation runs as the **`authenticated`** role.
+  - Reads/writes as `authenticated`: `cabins` (select/insert/update/delete), `bookings`
+    (select with `cabins`/`guests` joins, update, delete), `settings` (select/update), `guests`
+    (insert/delete via the dev `Uploader`). Storage: uploads to `cabin-images` and `avatars`.
+  - Its "Users" page calls `auth.signUp` (behind `ProtectedRoute`, but that is client-side only).
+  - ⚠️ **Key risk for this app:** if the existing policies are the course's "allow all for
+    `authenticated`", then any guest who signs in to the mobile app with Google gets the same
+    JWT role as an admin and could read every guest's data and edit/delete any booking or cabin
+    through the API. Phase 2 must separate admins from guests (see there).
+- [ ] Inspect existing policies/grants: run `docs/sql/00-inspect-security.sql` in Supabase →
+      SQL Editor (read-only) and record the results below
+- [ ] Check Supabase → Auth → Providers → Email: is "Allow new users to sign up" on? If so,
+      anyone can create an `authenticated` user with the public anon key (same risk as above)
 
 ### Phase 1: Browse cabins (no auth) ~1–2 days
 - [ ] Tabs layout (`(tabs)`: Cabins, Account) + stack for details
@@ -73,6 +83,12 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 
 ### Phase 2: Security / RLS ~½ day ⚠️ do before writing any auth/booking code
 Draft policies (verify against Phase 0 findings; run in the SQL editor):
+- **Admins vs guests.** Both are `authenticated`, so mark admins with
+  `app_metadata.role = 'admin'` (only settable server-side, unlike `user_metadata`, which users
+  can edit themselves): `update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}' where email in (…)`.
+  Add `public.is_admin()` = `(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'` and replace
+  any "all for `authenticated`" policies (tables + storage buckets) with `is_admin()` ones.
+  Admins must log out/in once to get the new claim. Then check the admin app still works.
 - `cabins`, `settings`: RLS on; `select` for `anon, authenticated` using `true`.
 - `bookings`: **don't expose to anon** (contains guest data). For availability add a
   `security definer` RPC `get_booked_dates(cabin_id)` returning only `startDate, endDate`.
