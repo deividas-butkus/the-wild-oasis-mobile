@@ -1,0 +1,5 @@
+<!-- Android themed-icon silhouette: only alpha matters, the system tints it. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M352 540 H672 V720 H352 Z M486 620 H538 V720 H486 Z M382 585 H446 V637 H382 Z M578 585 H642 V637 H578 Z"/>
+  <polygon points="318,560 512,410 706,560" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linejoin="round"/>
+</svg>

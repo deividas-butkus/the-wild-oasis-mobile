@@ -1,0 +1,8 @@
+<!-- Cabin on a transparent background, kept inside Android's adaptive-icon safe zone. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect x="352" y="540" width="320" height="180" fill="#926835"/>
+  <polygon points="318,560 512,410 706,560" fill="#4B351B" stroke="#F4ECE1" stroke-width="20" stroke-linejoin="round"/>
+  <rect x="382" y="585" width="64" height="52" fill="#E8D6BF"/>
+  <rect x="578" y="585" width="64" height="52" fill="#E8D6BF"/>
+  <rect x="486" y="620" width="52" height="100" fill="#382814"/>
+</svg>

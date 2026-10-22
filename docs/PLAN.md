@@ -103,8 +103,11 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
       weight is its own family, see `src/constants/fonts.ts`). Icons: `expo-symbols`
       (`@expo/vector-icons` is deprecated), wrapped in `src/components/icon.tsx`
 - [x] Splash image + web favicon from the website logo (splash only shows in real builds, not Expo Go)
-- [ ] App icon: the only logo is 163×163 (website), too small for a 1024×1024 icon. Needs a
-      higher-res source or a redraw; until then the template icon stays
+- [x] App icon: the only logo is 163×163 (too small), so it's redrawn as vector art in the
+      logo's style: `assets/icon-source/` (`scene.svg` + `cabin.svg`, `monochrome.svg` for
+      Android themed icons). PNGs in `assets/images/` were rendered from them with
+      `@resvg/resvg-js` (icon 1024, Android layers 512/432). iOS uses `icon.png` (the template's
+      Icon Composer file was removed). Only visible in real builds, not Expo Go
 - [x] TanStack Query (`src/lib/cabins.ts` hooks): caching, refetch, retries except "not found"
 - [x] Checked on web (2026-10-22): list, filter, discount price, detail, back, account tab,
       not-found states. **Still to check on a phone in Expo Go**: icons (native SF/Material

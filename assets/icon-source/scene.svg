@@ -1,0 +1,19 @@
+<!-- Background scene (sky, mountains, lake) in the website logo's palette. No cabin. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F4ECE1"/>
+      <stop offset="0.5" stop-color="#DDC2A2"/>
+      <stop offset="1" stop-color="#C69963"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sky)"/>
+  <path d="M0 560 L150 390 L250 480 L400 250 L520 420 L640 300 L780 460 L900 350 L1024 480 V1024 H0 Z" fill="#B78343" opacity="0.8"/>
+  <path d="M0 640 L180 480 L300 570 L470 380 L600 540 L740 440 L880 570 L1024 500 V1024 H0 Z" fill="#6C4D28"/>
+  <path d="M0 712 Q512 688 1024 712 V1024 H0 Z" fill="#141C24"/>
+  <g stroke="#3C546C" stroke-width="12" stroke-linecap="round">
+    <line x1="300" y1="780" x2="724" y2="780"/>
+    <line x1="380" y1="830" x2="644" y2="830"/>
+    <line x1="450" y1="880" x2="574" y2="880"/>
+  </g>
+</svg>
