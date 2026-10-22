@@ -230,14 +230,23 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
 - [x] Live write tests on the owner's iPhone in Expo Go (2026-10-23): booking, editing,
       cancelling and profile update all work
 
-### Phase 5: Polish & demo ~1 day
-- [ ] Empty/error/loading states, haptics on actions, pull-to-refresh everywhere
-- [ ] EAS: `npx eas-cli@latest login` (user needs an Expo account), `eas init`, `eas.json` with a
-      `preview` profile `{"android": {"buildType": "apk"}}`, set `EXPO_PUBLIC_*` via `eas env:create`
-- [ ] `npx eas-cli@latest build -p android --profile preview` → shareable APK link
-- [ ] README for employers: screenshots/GIF, architecture diagram (app ↔ Supabase ↔ website),
-      RLS/security section, tech choices, how to run, APK link
-- [ ] 1–2 min screen recording (browse → sign in → book → cancel)
+### Phase 5: Polish & demo 🚧 in progress
+- [x] Haptics (`src/lib/haptics.ts`, failures ignored): selection on calendar days, filter
+      chips, stepper; success/error on booking create/edit, cancel, profile save. Loading,
+      empty and error states and pull-to-refresh were done per screen in Phases 1 and 4
+- [x] EAS (2026-10-23): already logged in as `deividas-butkus`; `eas init` →
+      `@deividas-butkus/the-wild-oasis-mobile` (projectId in `app.json`); package/bundle ID
+      `com.deividasbutkus.thewildoasismobile`; `eas.json` `preview` = internal APK, env
+      `preview`; `EXPO_PUBLIC_SUPABASE_*` set with `eas env:set` (plaintext, public anyway) for
+      preview + production; Android keystore generated and stored by EAS; expo-doctor 20/20
+- [ ] `eas build -p android --profile preview` → shareable APK link (first build started 2026-10-23)
+- [x] README for employers: features, architecture (mermaid), security section, tech, how to run
+- [ ] README: screenshots (owner takes them on the phone) + APK link once the build is done
+- [ ] 1–2 min screen recording (browse → sign in → book → cancel), by the owner
+- Google consent screen stays in **Testing** (owner's choice, 2026-10-23): only test users can
+  sign in. Add a reviewer's Gmail under Google Auth Platform → Audience → Test users (max 100).
+  Publishing needs a home page + privacy policy URL on an authorized domain (e.g. a `/privacy`
+  page on the website); don't upload a logo, that triggers Google verification
 - [x] Public GitHub repo: https://github.com/deividas-butkus/the-wild-oasis-mobile (created 2026-10-22; keep pushing)
 
 ---
