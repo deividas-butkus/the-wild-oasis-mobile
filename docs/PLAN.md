@@ -54,11 +54,14 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 ### Phase 0: Setup ✅ partly done
 - [x] Expo project (default template, reset), Supabase client (`src/lib/supabase.ts`, `.web.ts`)
 - [x] Theme colors, dark app config, `.env.example`, `.nvmrc`, typecheck/lint passing
-- [ ] **User:** put the publishable/anon key in `.env.local`
-      (Supabase → Project Settings → API Keys). Home screen then shows "Connected: N cabins"
-- [ ] Check the admin app (`../vercel_the-wild-oasis`): which key, which tables it writes
-- [ ] Inspect current RLS state: Supabase → Database → Policies (or SQL editor:
-      `select tablename, rowsecurity from pg_tables where schemaname='public';`)
+- [x] Legacy `anon` key in `.env.local` (2026-10-22). App runs on web and shows "Connected: 0 cabins visible"
+- [x] RLS state as seen by the anon key: **all 4 tables return 0 rows, no error**. So RLS is
+      enabled but no policy grants `anon` read access. Safe default; Phase 2 opens what's needed.
+- [ ] Check the admin app (`../vercel_the-wild-oasis`): which key, which tables it writes. It
+      likely uses the anon key + `authenticated` policies, so **read the existing policies**
+      (Supabase → Database → Policies) before adding/changing any
+- [ ] Inspect existing policies/grants in the SQL editor:
+      `select tablename, policyname, roles, cmd, qual from pg_policies where schemaname='public';`
 
 ### Phase 1: Browse cabins (no auth) ~1–2 days
 - [ ] Tabs layout (`(tabs)`: Cabins, Account) + stack for details
