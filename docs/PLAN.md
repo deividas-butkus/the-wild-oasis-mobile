@@ -51,7 +51,7 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
 
 ## Phases
 
-### Phase 0: Setup ✅ partly done
+### Phase 0: Setup ✅ done
 - [x] Expo project (default template, reset), Supabase client (`src/lib/supabase.ts`, `.web.ts`)
 - [x] Theme colors, dark app config, `.env.example`, `.nvmrc`, typecheck/lint passing
 - [x] Legacy `anon` key in `.env.local` (2026-10-22). App runs on web and shows "Connected: 0 cabins visible"
@@ -68,10 +68,23 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
     `authenticated`", then any guest who signs in to the mobile app with Google gets the same
     JWT role as an admin and could read every guest's data and edit/delete any booking or cabin
     through the API. Phase 2 must separate admins from guests (see there).
-- [ ] Inspect existing policies/grants: run `docs/sql/00-inspect-security.sql` in Supabase →
-      SQL Editor (read-only) and record the results below
-- [ ] Check Supabase → Auth → Providers → Email: is "Allow new users to sign up" on? If so,
-      anyone can create an `authenticated` user with the public anon key (same risk as above)
+- [x] Inspect existing policies/grants: ran `docs/sql/00-inspect-security.sql` (2026-10-22). Results:
+  - RLS **enabled** on all 5 public tables: `cabins`, `bookings`, `guests`, `settings`, and
+    `contact` (not in the schema above, not used by the website or admin app, no policies).
+  - Grants: `anon` and `authenticated` have **all** privileges on every table (Supabase
+    default), so RLS policies are the only protection.
+  - Policies: `cabins`, `bookings`, `guests`, `settings` each have select/insert/update/delete
+    for **`authenticated` with `true`** (the course's "Enable … for all users"). Nothing for `anon`.
+  - Storage: `avatars` and `cabin-images` buckets: all operations for `authenticated`.
+  - No functions in `public`.
+  - Auth users: 3, all email/password, created 2025-07-07, none with an `app_metadata.role`.
+- [x] Auth settings: "Allow new users to sign up" **on**, "Confirm email" on, anonymous sign-ins
+      off; Email provider enabled, **Google disabled**.
+- ⚠️ **Confirmed: open hole today, independent of this app.** Anyone with the public anon key
+  (it's in the admin app's JS bundle) can sign up with any email address they can receive mail
+  at, confirm it, and then read every guest's data and edit or delete all bookings, cabins and
+  settings. Turning sign-ups off isn't the fix, because Google sign-in (Phase 3) needs them on to
+  create new users. The fix is the admin/guest split in Phase 2, which is now the top priority.
 
 ### Phase 1: Browse cabins (no auth) ~1–2 days
 - [ ] Tabs layout (`(tabs)`: Cabins, Account) + stack for details
