@@ -122,7 +122,7 @@ Draft policies (verify against Phase 0 findings; run in the SQL editor):
 - [ ] README for employers: screenshots/GIF, architecture diagram (app ↔ Supabase ↔ website),
       RLS/security section, tech choices, how to run, APK link
 - [ ] 1–2 min screen recording (browse → sign in → book → cancel)
-- [ ] Push to a public GitHub repo
+- [x] Public GitHub repo: https://github.com/deividas-butkus/the-wild-oasis-mobile (created 2026-10-22; keep pushing)
 
 ---
 
