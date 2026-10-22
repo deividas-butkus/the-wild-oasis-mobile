@@ -62,7 +62,9 @@ export default function RootLayout() {
         >
           {/* title is what the back button shows on screens pushed over the tabs */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Cabins" }} />
-          <Stack.Screen name="cabins/[id]" options={{ title: "Cabin" }} />
+          <Stack.Screen name="cabins/[id]/index" options={{ title: "Cabin" }} />
+          <Stack.Screen name="cabins/[id]/reserve" options={{ title: "Reserve" }} />
+          <Stack.Screen name="reservations/[id]" options={{ title: "Edit reservation" }} />
           <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>

@@ -207,14 +207,27 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
 Later/optional: native Google Sign-In (`@react-native-google-signin/google-signin` +
 `signInWithIdToken`) is nicer but needs a development build and iOS/Android client IDs.
 
-### Phase 4: Reservations ~1–2 days
-- [ ] Account tab: profile (nationality picker + national ID, same validation as website: `^[a-zA-Z0-9]{6,12}$`)
-- [ ] My reservations: list (cabin name/image, dates, nights, guests, price, status), past vs upcoming
-- [ ] Cancel (only future, own bookings), with optimistic update
-- [ ] Book from cabin detail: date-range picker with booked dates disabled, guest count
-      (≤ maxCapacity), observations → `create_booking` RPC → thank-you screen
-      (pick a date-range calendar lib that works in Expo Go; check docs/compatibility first)
-- [ ] Edit booking (guests, observations)
+### Phase 4: Reservations 🚧 built, live write tests pending
+Tabs are now Cabins | Reservations | Account. Data: `src/lib/bookings.ts` (TanStack Query hooks;
+create/edit via the 2b RPCs, cancel = RLS-limited delete).
+- [x] Account tab: profile form (read-only name/email, nationality via a searchable country
+      picker modal with flags, national ID with the website's `^[a-zA-Z0-9]{6,12}$`), update via
+      RLS (own row), sign out. Countries copied to `src/data/countries.json`.
+- [x] Reservations tab: Upcoming (soonest first) / Past sections, card like the website (nights,
+      cabin, dates + "in 2 days", price, guests, booked at), pull-to-refresh, empty state.
+- [x] Cancel (upcoming only): inline "Cancel this reservation? Keep / Yes, cancel" (no native
+      dialogs: `Alert` buttons don't work on web), optimistic removal with rollback on error.
+- [x] Reserve: "Reserve this cabin" on the cabin screen → `cabins/[id]/reserve`. Own range
+      calendar (`src/components/range-calendar.tsx`, date-fns; `react-native-calendars` skipped:
+      old deps, unclear React 19 support): booked nights struck through, check-out day free
+      for the next check-in (same rule as `create_booking`), max nights from `settings`. Guest
+      stepper (≤ min(capacity, maxGuestsPerBooking)), observations, price summary →
+      `create_booking` RPC → thank-you view. Signed out → "Please sign in" prompt.
+- [x] Edit booking (`reservations/[id]`): guests + observations → `update_booking` RPC.
+- [x] Checked on web while signed in (2026-10-23), read-only: profile loads (country + flag, ID),
+      reservations list (2 upcoming, 1 past), edit screen prefilled, calendar shows Cabin 001's
+      booked nights and rejects a range across them, 3 nights × $555 = $1665 summary.
+- [ ] Live write tests (create → edit → cancel a test booking, profile update) and a phone check
 
 ### Phase 5: Polish & demo ~1 day
 - [ ] Empty/error/loading states, haptics on actions, pull-to-refresh everywhere

@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
 
@@ -44,5 +44,27 @@ export function useGuest(user: User | undefined) {
     queryKey: ["guest", user?.id],
     queryFn: () => getOrCreateGuest(user!),
     enabled: !!user,
+  });
+}
+
+// Same rule as the website's updateGuest action
+export const nationalIdPattern = /^[a-zA-Z0-9]{6,12}$/;
+
+type ProfileUpdate = { nationality: string; countryFlag: string; nationalID: string };
+
+export function useUpdateGuest(guest: Guest) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (update: ProfileUpdate) => {
+      if (!update.nationality) throw new Error("Please select where you're from");
+      if (!nationalIdPattern.test(update.nationalID))
+        throw new Error("Please provide a valid national ID (6–12 letters or digits)");
+
+      // RLS: only your own row, and the email can't be changed
+      const { error } = await supabase.from("guests").update(update).eq("id", guest.id);
+      if (error) throw new Error("Your profile could not be updated");
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["guest"] }),
   });
 }

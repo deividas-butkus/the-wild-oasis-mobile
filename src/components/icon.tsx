@@ -7,6 +7,7 @@ type SymbolName = ComponentProps<typeof SymbolView>["name"];
 // SF Symbols on iOS, Material Symbols on Android and web
 const icons = {
   cabins: { ios: "house", android: "cottage", web: "cottage" },
+  reservations: { ios: "calendar", android: "event", web: "event" },
   account: { ios: "person.crop.circle", android: "account_circle", web: "account_circle" },
   guests: { ios: "person.2.fill", android: "group", web: "group" },
   location: { ios: "mappin.and.ellipse", android: "location_on", web: "location_on" },

@@ -1,8 +1,9 @@
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import type { ReactNode } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
+import { Button } from "@/components/button";
 import { Icon, type IconName } from "@/components/icon";
 import { Price } from "@/components/price";
 import { ErrorState, Loading } from "@/components/screen-state";
@@ -54,6 +55,11 @@ export default function CabinScreen() {
           </View>
 
           <Text style={styles.description}>{description}</Text>
+
+          <Button
+            label="Reserve this cabin"
+            onPress={() => router.push({ pathname: "/cabins/[id]/reserve", params: { id } })}
+          />
         </View>
       </ScrollView>
     </>

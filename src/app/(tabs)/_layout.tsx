@@ -31,6 +31,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="reservations"
+        options={{
+          title: "Reservations",
+          headerTitle: "Your reservations",
+          tabBarIcon: ({ color, size }) => <Icon name="reservations" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="account"
         options={{
           title: "Account",
