@@ -197,10 +197,12 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
 **Tests (2026-10-23):**
 - [x] Web: sign in → "Welcome, Deividas"; existing website guest row reused (no duplicate);
       still signed in after reload; sign out clears the stored session.
-- [x] iPhone, Expo Go: sign in and sign out work (after the iOS redirect fix above).
+- [x] iPhone, Expo Go: sign in and sign out work (after the iOS redirect fix above); still
+      signed in after fully closing and reopening Expo Go.
 - [x] RLS as the signed-in Google user (REST with the user's JWT): guests 1 (own), bookings 3
       (own), cabins 8; `PATCH cabins` → 0 rows changed.
-- [ ] Android (Expo Go with `--tunnel`, or the APK in Phase 5).
+- [ ] Android: skipped for now (owner's choice). Check with the APK in Phase 5, or Expo Go
+      with `--tunnel`.
 
 Later/optional: native Google Sign-In (`@react-native-google-signin/google-signin` +
 `signInWithIdToken`) is nicer but needs a development build and iOS/Android client IDs.
