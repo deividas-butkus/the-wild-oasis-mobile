@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, TextInput, View, type TextInputProps } from "rea
 import { Text } from "@/components/text";
 import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { haptics } from "@/lib/haptics";
 
 // Small form building blocks shared by the reserve, edit-booking and profile screens
 
@@ -44,7 +45,10 @@ export function Stepper({ value, min, max, onChange }: StepperProps) {
 function StepButton({ label, disabled, onPress }: { label: string; disabled: boolean; onPress: () => void }) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        haptics.selection();
+        onPress();
+      }}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityLabel={label === "+" ? "Increase" : "Decrease"}

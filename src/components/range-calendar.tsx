@@ -20,6 +20,7 @@ import { Text } from "@/components/text";
 import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import type { BookedRange } from "@/lib/bookings";
+import { haptics } from "@/lib/haptics";
 
 // Pick check-in and check-out days. A booking occupies the nights from its start up to (not
 // including) its end, so a check-out day is free for the next check-in, matching
@@ -61,6 +62,8 @@ export function RangeCalendar({ bookedRanges, value, onChange, maxNights }: Prop
     const { start, end } = value;
     if (start && !end && canEnd(start, day)) onChange({ start, end: day });
     else if (canStart(day)) onChange({ start: day });
+    else return;
+    haptics.selection();
   }
 
   const days = eachDayOfInterval({ start: month, end: endOfMonth(month) });

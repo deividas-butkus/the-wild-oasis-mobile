@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { haptics } from "@/lib/haptics";
 import { supabase } from "@/lib/supabase";
 
 // The signed-in user's row in `guests`, matched by email (RLS only exposes your own row).
@@ -65,6 +66,10 @@ export function useUpdateGuest(guest: Guest) {
       const { error } = await supabase.from("guests").update(update).eq("id", guest.id);
       if (error) throw new Error("Your profile could not be updated");
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["guest"] }),
+    onSuccess: () => {
+      haptics.success();
+      queryClient.invalidateQueries({ queryKey: ["guest"] });
+    },
+    onError: haptics.error,
   });
 }

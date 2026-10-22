@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 
 import { useAuth } from "@/lib/auth";
+import { haptics } from "@/lib/haptics";
 import { supabase } from "@/lib/supabase";
 
 // Guests read and cancel their own bookings directly (RLS), but create and edit them only
@@ -102,6 +103,8 @@ export function useCreateBooking() {
       if (error) throw new Error(error.message);
       return data;
     },
+    onSuccess: haptics.success,
+    onError: haptics.error,
     onSettled: (_id, _error, booking) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       queryClient.invalidateQueries({ queryKey: ["booked-dates", booking.cabinId] });
@@ -123,6 +126,8 @@ export function useUpdateBooking() {
       });
       if (error) throw new Error(error.message);
     },
+    onSuccess: haptics.success,
+    onError: haptics.error,
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
   });
 }
@@ -144,6 +149,7 @@ export function useCancelBooking() {
       if (error || !data.length) throw new Error("Reservation could not be cancelled");
     },
     onMutate: async (booking) => {
+      haptics.warning();
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Booking[]>(queryKey);
       queryClient.setQueryData<Booking[]>(queryKey, (bookings) =>
@@ -151,7 +157,10 @@ export function useCancelBooking() {
       );
       return { previous };
     },
-    onError: (_error, _booking, context) => queryClient.setQueryData(queryKey, context?.previous),
+    onError: (_error, _booking, context) => {
+      haptics.error();
+      queryClient.setQueryData(queryKey, context?.previous);
+    },
     onSettled: (_data, _error, booking) => {
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: ["booked-dates", booking.cabinId] });
