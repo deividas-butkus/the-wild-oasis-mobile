@@ -13,6 +13,7 @@ import { useEffect } from "react";
 
 import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
+import { AuthProvider } from "@/lib/auth";
 import { isNotFound } from "@/lib/errors";
 
 // A deep link straight to a cabin still gets the tabs underneath, so "back" works
@@ -49,19 +50,22 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.primary[950] },
-          headerTintColor: colors.accent[400],
-          headerTitleStyle: { fontFamily: fonts.semiBold },
-          contentStyle: { backgroundColor: colors.primary[950] },
-        }}
-      >
-        {/* title is what the back button shows on screens pushed over the tabs */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Cabins" }} />
-        <Stack.Screen name="cabins/[id]" options={{ title: "Cabin" }} />
-      </Stack>
+      <AuthProvider>
+        <StatusBar style="light" />
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: colors.primary[950] },
+            headerTintColor: colors.accent[400],
+            headerTitleStyle: { fontFamily: fonts.semiBold },
+            contentStyle: { backgroundColor: colors.primary[950] },
+          }}
+        >
+          {/* title is what the back button shows on screens pushed over the tabs */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Cabins" }} />
+          <Stack.Screen name="cabins/[id]" options={{ title: "Cabin" }} />
+          <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+        </Stack>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

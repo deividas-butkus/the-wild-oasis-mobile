@@ -158,23 +158,45 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
     → `42501 permission denied for function`.
 - Before Phase 3: turn "Allow new users to sign up" back on (needed for new Google users).
 
-### Phase 3: Google sign-in ~1–2 days
-- Recommended: **browser OAuth flow**, `supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo, skipBrowserRedirect: true } })`
-  + `expo-web-browser` `openAuthSessionAsync` + `expo-linking` to get back, then
-  `exchangeCodeForSession`. Works in Expo Go. Docs: Supabase "native mobile deep linking" +
-  "Login with Google (React Native)". Fetch them, don't code from memory.
-- Native Google Sign-In (`@react-native-google-signin/google-signin` + `signInWithIdToken`)
-  is nicer but needs a development build and iOS/Android client IDs. Optional upgrade later.
-- Setup:
-  - Supabase → Auth → Providers → Google: enable, enter a **Web** OAuth client ID + secret.
-  - Google Cloud: add redirect URI `https://umjziqypywdmvwglyegr.supabase.co/auth/v1/callback`.
-    ⚠️ The user doesn't remember which Google account owns the website's OAuth client
-    (project number `609615697019`; open `console.cloud.google.com/apis/credentials?project=609615697019`
-    in each account). Fallback: create a new OAuth client in any Google Cloud project (free).
-  - Supabase → Auth → URL Configuration: add the app's redirect URLs (Expo Go `exp://…`, app
-    scheme `thewildoasismobile://…`).
-- On first sign-in, create the `guests` row (email, fullName) if missing (same as the website's `signIn` callback).
-- Session persisted via `expo-sqlite` localStorage (already configured).
+### Phase 3: Google sign-in 🚧 app side done, waiting on Google/Supabase setup
+**App side (done 2026-10-23, typecheck/lint pass, checked on web up to Supabase):**
+- [x] Browser OAuth flow with **PKCE** (`flowType: "pkce"` in both Supabase clients):
+      `signInWithOAuth({ provider: "google", options: { redirectTo, skipBrowserRedirect: true } })`
+      → `WebBrowser.openAuthSessionAsync` → `exchangeCodeForSession(code)`. Only a one-time code
+      travels in the redirect URL, not tokens (Supabase's RN example uses tokens in the URL).
+      Works in Expo Go. Code: `src/lib/auth.tsx` (`AuthProvider`, `useAuth`, `signInWithGoogle`, `signOut`).
+- [x] `redirectTo = Linking.createURL("auth/callback")`: Expo Go `exp://<LAN-IP>:8081/--/auth/callback`,
+      builds `thewildoasismobile://auth/callback`, web `http://localhost:8081/auth/callback`.
+      Route `src/app/auth/callback.tsx`: web popup calls `maybeCompleteAuthSession()`; on native
+      (Android may also deliver the redirect as a deep link) it just redirects to `/account`.
+- [x] First sign-in creates the `guests` row (email, fullName from Google) if missing, like the
+      website's NextAuth `signIn` callback: `src/lib/guest.ts` (`useGuest`, get-or-create, RLS
+      limits it to your own row; unique-violation race handled).
+- [x] Account tab: "Continue with Google" when signed out; "Welcome, <first name>", email,
+      Sign out when signed in. Session persisted via `expo-sqlite` localStorage (native).
+- [x] Checked: the app opens Supabase's authorize URL; Supabase answers
+      "Unsupported provider: provider is not enabled" until the setup below is done.
+
+**Setup (owner):**
+- [ ] Google Cloud → APIs & Services → Credentials: an OAuth client ID of type **Web application**.
+      Either the website's client (project number `609615697019`; owner account unknown, open
+      `console.cloud.google.com/apis/credentials?project=609615697019` in each account) or a new
+      one in any project (free). **Authorized redirect URI:**
+      `https://umjziqypywdmvwglyegr.supabase.co/auth/v1/callback`.
+      OAuth consent screen: if it's in "Testing", add your Google account as a test user.
+- [ ] Supabase → Auth → Sign In / Providers → **Google**: enable, paste the client ID + secret.
+- [ ] Supabase → Auth → Sign In / Providers → **Allow new users to sign up: on** (new Google
+      users are created on first sign-in; RLS from Phase 2 gives them guest access only).
+- [ ] Supabase → Auth → URL Configuration → **Redirect URLs**, add:
+      `thewildoasismobile://**`, `exp://**`, `http://localhost:8081/**`.
+
+**Then test (together):**
+- [ ] Sign in on web and in Expo Go (iPhone/Android), guest row created once, sign out, sign in
+      again (no duplicate), session survives an app restart.
+- [ ] With a signed-in guest: other guests' bookings/rows not visible (RLS check from the app).
+
+Later/optional: native Google Sign-In (`@react-native-google-signin/google-signin` +
+`signInWithIdToken`) is nicer but needs a development build and iOS/Android client IDs.
 
 ### Phase 4: Reservations ~1–2 days
 - [ ] Account tab: profile (nationality picker + national ID, same validation as website: `^[a-zA-Z0-9]{6,12}$`)

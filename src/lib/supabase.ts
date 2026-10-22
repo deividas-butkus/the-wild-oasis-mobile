@@ -16,6 +16,8 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // OAuth returns a one-time code (exchanged in src/lib/auth.tsx), not tokens in the URL
+    flowType: "pkce",
   },
 });
 
