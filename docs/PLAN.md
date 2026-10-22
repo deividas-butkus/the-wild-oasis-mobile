@@ -207,7 +207,7 @@ SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations 
 Later/optional: native Google Sign-In (`@react-native-google-signin/google-signin` +
 `signInWithIdToken`) is nicer but needs a development build and iOS/Android client IDs.
 
-### Phase 4: Reservations 🚧 built, live write tests pending
+### Phase 4: Reservations ✅ done
 Tabs are now Cabins | Reservations | Account. Data: `src/lib/bookings.ts` (TanStack Query hooks;
 create/edit via the 2b RPCs, cancel = RLS-limited delete).
 - [x] Account tab: profile form (read-only name/email, nationality via a searchable country
@@ -227,7 +227,8 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
 - [x] Checked on web while signed in (2026-10-23), read-only: profile loads (country + flag, ID),
       reservations list (2 upcoming, 1 past), edit screen prefilled, calendar shows Cabin 001's
       booked nights and rejects a range across them, 3 nights × $555 = $1665 summary.
-- [ ] Live write tests (create → edit → cancel a test booking, profile update) and a phone check
+- [x] Live write tests on the owner's iPhone in Expo Go (2026-10-23): booking, editing,
+      cancelling and profile update all work
 
 ### Phase 5: Polish & demo ~1 day
 - [ ] Empty/error/loading states, haptics on actions, pull-to-refresh everywhere
