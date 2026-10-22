@@ -76,8 +76,9 @@ The full audit, findings and decisions are in [docs/PLAN.md](docs/PLAN.md).
 
 ## Run it
 
-**Android:** install the APK from the latest
-[EAS build](https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds).
+**Android:** open the [latest build](https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/858c9fd1-7863-4fde-baf9-8ee1761bbee8)
+on the phone (or scan its QR code) and install the APK. Google sign-in is limited to approved
+test accounts while the app's Google consent screen is unpublished; ask me to add yours.
 
 **From source:**
 

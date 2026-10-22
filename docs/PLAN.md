@@ -239,9 +239,12 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
       `com.deividasbutkus.thewildoasismobile`; `eas.json` `preview` = internal APK, env
       `preview`; `EXPO_PUBLIC_SUPABASE_*` set with `eas env:set` (plaintext, public anyway) for
       preview + production; Android keystore generated and stored by EAS; expo-doctor 20/20
-- [ ] `eas build -p android --profile preview` → shareable APK link (first build started 2026-10-23)
+- [x] `eas build -p android --profile preview` (2026-10-23, ~15 min): APK (108 MB, versionCode 1),
+      build page https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/858c9fd1-7863-4fde-baf9-8ee1761bbee8
+      (install link + QR). Not yet installed on an Android device
 - [x] README for employers: features, architecture (mermaid), security section, tech, how to run
-- [ ] README: screenshots (owner takes them on the phone) + APK link once the build is done
+- [x] README: APK link
+- [ ] README: screenshots (owner takes them on the phone)
 - [ ] 1–2 min screen recording (browse → sign in → book → cancel), by the owner
 - Google consent screen stays in **Testing** (owner's choice, 2026-10-23): only test users can
   sign in. Add a reviewer's Gmail under Google Auth Platform → Audience → Test users (max 100).
