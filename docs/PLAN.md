@@ -92,7 +92,7 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
   deleted by the owner (2026-10-22); sign-ups turned off until Phase 2 is live and Phase 3 needs
   them (re-enable then); Phase 2 closes the hole. The other 2 users are the owner's test accounts.
 
-### Phase 1: Browse cabins (no auth) ✅ done on web (phone check pending)
+### Phase 1: Browse cabins (no auth) ✅ done
 - [x] Tabs layout (`(tabs)`: Cabins, Account placeholder) + root stack for details. Root stack
       has `unstable_settings.anchor = "(tabs)"`, so a deep link to a cabin still gets "back"
 - [x] Cabin list: `FlatList`, `expo-image`, price/discount, capacity, pull-to-refresh, loading/error states
@@ -110,8 +110,8 @@ employer: building, auth, data security (RLS), and distribution. Not intended fo
       Icon Composer file was removed). Only visible in real builds, not Expo Go
 - [x] TanStack Query (`src/lib/cabins.ts` hooks): caching, refetch, retries except "not found"
 - [x] Checked on web (2026-10-22): list, filter, discount price, detail, back, account tab,
-      not-found states. **Still to check on a phone in Expo Go**: icons (native SF/Material
-      symbols), fonts, pull-to-refresh, image loading
+      not-found states. Checked on a phone in Expo Go (2026-10-23): icons, fonts,
+      pull-to-refresh, images, detail and back all fine
 
 ### Phase 2: Security / RLS ✅ done
 SQL lives in `docs/sql/`, run by hand in Supabase → SQL Editor (no migrations tooling).
