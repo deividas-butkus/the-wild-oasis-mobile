@@ -6,6 +6,7 @@ import { CapacityFilter } from "@/components/capacity-filter";
 import { ErrorState, Loading } from "@/components/screen-state";
 import { Text } from "@/components/text";
 import { colors } from "@/constants/colors";
+import { fonts } from "@/constants/fonts";
 import { capacityFilters, useCabins, type CapacityFilter as Filter } from "@/lib/cabins";
 
 export default function CabinsScreen() {
@@ -26,6 +27,7 @@ export default function CabinsScreen() {
       contentContainerStyle={styles.list}
       ListHeaderComponent={
         <View style={styles.header}>
+          <Text style={styles.title}>Our luxury cabins</Text>
           <Text style={styles.intro}>
             Cozy yet luxurious cabins, located right in the heart of the Italian Dolomites.
           </Text>
@@ -55,6 +57,11 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 16,
+  },
+  title: {
+    fontFamily: fonts.semiBold,
+    fontSize: 24,
+    color: colors.accent[400],
   },
   intro: {
     color: colors.primary[200],

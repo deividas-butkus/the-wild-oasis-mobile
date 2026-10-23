@@ -246,6 +246,11 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
       blocks unknown APKs: turn its scan off for the install, back on after
 - [x] README for employers: features, architecture (mermaid), security section, tech, how to run
 - [x] README: APK link
+- [x] Branding (2026-10-23): website logo + "The Wild Oasis" as the Cabins tab header
+      (`src/components/logo.tsx`); About screen (`src/app/about.tsx`, ⓘ in the Account tab's
+      header) with the website's About text and photos (resized to 1000 px, ~430 KB), buttons to
+      the cabins and the website. No Home tab: Cabins is the start screen. Checked on web; not in
+      the 2026-10-23 APK (needs a rebuild)
 - [ ] README: screenshots (owner takes them on the phone)
 - [ ] 1–2 min screen recording (browse → sign in → book → cancel), by the owner
 - Google consent screen stays in **Testing** (owner's choice, 2026-10-23): only test users can

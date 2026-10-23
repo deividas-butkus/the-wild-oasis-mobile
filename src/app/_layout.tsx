@@ -65,6 +65,7 @@ export default function RootLayout() {
           <Stack.Screen name="cabins/[id]/index" options={{ title: "Cabin" }} />
           <Stack.Screen name="cabins/[id]/reserve" options={{ title: "Reserve" }} />
           <Stack.Screen name="reservations/[id]" options={{ title: "Edit reservation" }} />
+          <Stack.Screen name="about" options={{ title: "About" }} />
           <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>
