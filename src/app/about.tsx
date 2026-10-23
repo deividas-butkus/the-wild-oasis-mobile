@@ -1,6 +1,5 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 import { Button } from "@/components/button";
@@ -9,9 +8,8 @@ import { colors } from "@/constants/colors";
 import { fonts } from "@/constants/fonts";
 import { useCabins } from "@/lib/cabins";
 
-// The website's About page, shortened for a phone
-const websiteUrl = "https://the-wild-oasis-website-udemy.vercel.app";
-
+// The website's About page, shortened for a phone. No link to the website: it isn't built for
+// phone screens.
 export default function AboutScreen() {
   // Usually cached already by the Cabins tab
   const { data: cabins } = useCabins();
@@ -53,14 +51,7 @@ export default function AboutScreen() {
         </Text>
       </View>
 
-      <View style={styles.actions}>
-        <Button label="Explore our luxury cabins" onPress={() => router.navigate("/")} />
-        <Button
-          label="Visit our website"
-          variant="secondary"
-          onPress={() => WebBrowser.openBrowserAsync(websiteUrl)}
-        />
-      </View>
+      <Button label="Explore our luxury cabins" onPress={() => router.navigate("/")} />
     </ScrollView>
   );
 }
@@ -89,8 +80,5 @@ const styles = StyleSheet.create({
   text: {
     color: colors.primary[200],
     lineHeight: 24,
-  },
-  actions: {
-    gap: 12,
   },
 });

@@ -1,7 +1,6 @@
 import { router, type Href } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import { useRef, useState, type ComponentRef } from "react";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
 
 import { Icon, type IconName } from "@/components/icon";
 import { Text } from "@/components/text";
@@ -11,16 +10,14 @@ import { haptics } from "@/lib/haptics";
 
 // The ☰ menu at the right of the Cabins header: screens that aren't tabs.
 // New screens get a line here.
-type MenuItem = { label: string; icon: IconName } & ({ href: Href } | { url: string });
+type MenuItem = { label: string; icon: IconName; href: Href };
 
-const items: MenuItem[] = [
-  { label: "About us", icon: "about", href: "/about" },
-  { label: "Our website", icon: "website", url: "https://the-wild-oasis-website-udemy.vercel.app" },
-];
+const items: MenuItem[] = [{ label: "About us", icon: "about", href: "/about" }];
 
 export function HeaderMenu() {
   const button = useRef<ComponentRef<typeof Pressable>>(null);
   const [anchor, setAnchor] = useState<{ top: number; right: number } | null>(null);
+  const chosen = useRef<MenuItem | null>(null);
 
   function open() {
     haptics.selection();
@@ -30,10 +27,18 @@ export function HeaderMenu() {
     });
   }
 
+  // On iOS, presenting anything while the menu is still closing can fail silently, so there
+  // the choice waits for the menu's onDismiss (iOS only)
   function select(item: MenuItem) {
     setAnchor(null);
-    if ("href" in item) router.push(item.href);
-    else WebBrowser.openBrowserAsync(item.url);
+    if (Platform.OS === "ios") chosen.current = item;
+    else router.push(item.href);
+  }
+
+  function handleDismiss() {
+    const item = chosen.current;
+    chosen.current = null;
+    if (item) router.push(item.href);
   }
 
   return (
@@ -55,6 +60,7 @@ export function HeaderMenu() {
         animationType="fade"
         statusBarTranslucent
         onRequestClose={() => setAnchor(null)}
+        onDismiss={handleDismiss}
       >
         <Pressable
           style={styles.backdrop}
