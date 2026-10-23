@@ -241,7 +241,9 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
       preview + production; Android keystore generated and stored by EAS; expo-doctor 20/20
 - [x] `eas build -p android --profile preview` (2026-10-23, ~15 min): APK (108 MB, versionCode 1),
       build page https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/858c9fd1-7863-4fde-baf9-8ee1761bbee8
-      (install link + QR). Not yet installed on an Android device
+      (install link + QR). Installed on a Pixel (2026-10-23). The build page's Install button
+      left Chrome loading and never downloaded; the direct artifact link worked. Play Protect
+      blocks unknown APKs: turn its scan off for the install, back on after
 - [x] README for employers: features, architecture (mermaid), security section, tech, how to run
 - [x] README: APK link
 - [ ] README: screenshots (owner takes them on the phone)

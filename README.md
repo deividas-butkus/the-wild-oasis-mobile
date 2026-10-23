@@ -76,9 +76,13 @@ The full audit, findings and decisions are in [docs/PLAN.md](docs/PLAN.md).
 
 ## Run it
 
-**Android:** open the [latest build](https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/858c9fd1-7863-4fde-baf9-8ee1761bbee8)
-on the phone (or scan its QR code) and install the APK. Google sign-in is limited to approved
-test accounts while the app's Google consent screen is unpublished; ask me to add yours.
+**Android:** on the phone, open the
+[APK download](https://expo.dev/artifacts/eas/5o4xyA8ID1bve0xlrujvt0uqGhRtSLWjsDkfmrDLMOE.apk)
+(108 MB; [build page](https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/858c9fd1-7863-4fde-baf9-8ee1761bbee8)),
+then open the downloaded file and allow installing from the browser. Google Play Protect blocks
+apps from outside the Play Store: if it refuses, turn off Play Store → Play Protect → ⚙ → *Scan
+apps with Play Protect* for the install and back on afterwards. Google sign-in is limited to
+approved test accounts while the app's Google consent screen is unpublished; ask me to add yours.
 
 **From source:**
 
