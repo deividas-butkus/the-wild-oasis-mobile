@@ -248,7 +248,7 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
 - [x] README: APK link
 - [x] Branding (2026-10-23): website logo + "The Wild Oasis" as the Cabins tab header
       (`src/components/logo.tsx`) with a ☰ menu on the right (`src/components/header-menu.tsx`:
-      About us; non-tab screens go there); About screen (`src/app/about.tsx`) with the website's About text and photos (resized to 1000 px, ~430 KB), button to
+      About us; non-tab screens go there; its three bars animate into a ✕ while open); About screen (`src/app/about.tsx`) with the website's About text and photos (resized to 1000 px, ~430 KB), button to
       the cabins. No links to the website: it isn't responsive (overlapping header, huge hero
       text on a phone). On iOS, menu choices run in the Modal's `onDismiss`: opening the in-app
       browser while the menu was closing failed silently. No Home tab: Cabins is the start screen. Checked on web; not in

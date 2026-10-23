@@ -13,7 +13,6 @@ const icons = {
   location: { ios: "mappin.and.ellipse", android: "location_on", web: "location_on" },
   privacy: { ios: "eye.slash.fill", android: "visibility_off", web: "visibility_off" },
   about: { ios: "info.circle", android: "info", web: "info" },
-  menu: { ios: "line.3.horizontal", android: "menu", web: "menu" },
 } satisfies Record<string, SymbolName>;
 
 export type IconName = keyof typeof icons;
