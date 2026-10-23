@@ -244,6 +244,9 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
       (install link + QR). Installed on a Pixel (2026-10-23). The build page's Install button
       left Chrome loading and never downloaded; the direct artifact link worked. Play Protect
       blocks unknown APKs: turn its scan off for the install, back on after
+- [x] Rebuilt the preview APK (2026-10-23, from `45bdf30`, with the branding below; 108 MB,
+      versionCode 1): https://expo.dev/accounts/deividas-butkus/projects/the-wild-oasis-mobile/builds/63d2711d-a994-4359-ab99-8b836f66771d.
+      Same versionCode, so it installs over the earlier APK
 - [x] README for employers: features, architecture (mermaid), security section, tech, how to run
 - [x] README: APK link
 - [x] Branding (2026-10-23): website logo + "The Wild Oasis" as the Cabins tab header
@@ -251,8 +254,8 @@ create/edit via the 2b RPCs, cancel = RLS-limited delete).
       About us; non-tab screens go there; its three bars animate into a ✕ while open); About screen (`src/app/about.tsx`) with the website's About text and photos (resized to 1000 px, ~430 KB), button to
       the cabins. No links to the website: it isn't responsive (overlapping header, huge hero
       text on a phone). On iOS, menu choices run in the Modal's `onDismiss`: opening the in-app
-      browser while the menu was closing failed silently. No Home tab: Cabins is the start screen. Checked on web; not in
-      the 2026-10-23 APK (needs a rebuild)
+      browser while the menu was closing failed silently. No Home tab: Cabins is the start screen. Checked on web; in the
+      rebuilt APK below
 - [ ] README: screenshots (owner takes them on the phone)
 - [ ] 1–2 min screen recording (browse → sign in → book → cancel), by the owner
 - Google consent screen stays in **Testing** (owner's choice, 2026-10-23): only test users can
